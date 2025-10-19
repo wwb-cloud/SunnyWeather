@@ -14,6 +14,7 @@ import androidx.fragment.app.Fragment
 import androidx.lifecycle.Observer
 import androidx.lifecycle.ViewModelProvider
 import androidx.recyclerview.widget.LinearLayoutManager
+import com.sunnyweather.android.MainActivity
 import com.sunnyweather.android.databinding.FragmentPlaceBinding
 import com.sunnyweather.android.ui.weather.WeatherActivity
 
@@ -38,8 +39,9 @@ class PlaceFragment : Fragment() {
 
     override fun onActivityCreated(savedInstanceState: Bundle?) {
         super.onActivityCreated(savedInstanceState)
-        // 关键逻辑：判断是否有已保存的地点，若有则直接跳转
-        if (viewModel.isPlaceSaved()) {
+        
+        // 仅在主页面(MainActivity)中且已有保存地点时，直接跳转到天气页
+        if (activity is MainActivity && viewModel.isPlaceSaved()) {
             val place = viewModel.getSavedPlace()
             val intent = Intent(context, WeatherActivity::class.java).apply {
                 putExtra("location_lng", place.location.lng)
@@ -47,7 +49,7 @@ class PlaceFragment : Fragment() {
                 putExtra("place_name", place.name)
             }
             startActivity(intent)
-            activity?.finish() // 结束当前Activity，避免返回时再次显示PlaceFragment
+            activity?.finish() // 结束MainActivity，避免返回时再次显示PlaceFragment
             return // 直接返回，不执行后续初始化逻辑
         }
 
